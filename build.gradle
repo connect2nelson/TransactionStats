@@ -10,9 +10,15 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'net.saliman.cobertura' version '2.5.4'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'net.saliman.cobertura'
+
 
 group = 'com.n26.stats'
 version = '0.0.1-SNAPSHOT'
@@ -25,5 +31,19 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+cobertura {
+	coverageIgnoreTrivial = true
+	coverageCheckBranchRate = 100
+	coverageCheckLineRate = 100
+	coverageCheckTotalLineRate = 100
+	coverageCheckHaltOnFailure = 100
+	coverageCheckPackageBranchRate = 100
+	coverageCheckPackageLineRate = 100
+    coverageIgnoreMethodAnnotations = ['com.n26.stats.TransactionStatistics.coverage.IgnoreCoverage']
+}
+
+test.finalizedBy(project.tasks.coberturaCheck)

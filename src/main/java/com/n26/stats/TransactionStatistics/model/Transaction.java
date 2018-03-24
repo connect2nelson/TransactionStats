@@ -8,6 +8,8 @@ public class Transaction {
 
     private final Amount amount;
     private final TimeStamp timeStamp;
+    private static final Integer WINDOW_PERIOD = 60;
+
 
     public Transaction(double amount, long timeStampInMilliSecs) {
         this.amount = new Amount(amount);
@@ -17,11 +19,12 @@ public class Transaction {
     public Amount getAmount() {
         return amount;
     }
+
     public TimeStamp getTimeStamp() {
         return timeStamp;
     }
 
-    public boolean isInRange(long currentTimeInEchoMillis) {
-        return ((currentTimeInEchoMillis - timeStamp.getTimeStampInMilliSecs()) / 1000) <= 60;
+    public boolean isWithinLast60Seconds(long currentTimeInEchoMillis) {
+        return ((currentTimeInEchoMillis - timeStamp.getTimeStampInMilliSecs()) / 1000) <= WINDOW_PERIOD;
     }
 }

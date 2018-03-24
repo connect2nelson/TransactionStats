@@ -15,7 +15,7 @@ public class TransactionTest {
         Transaction transaction1 = new Transaction(1, currentTimeStampInMilliSecs);
         Transaction transaction2 = new Transaction(2, transaction1.getTimeStamp().getTimeStampInMilliSecs()+ 1000);
 
-        boolean inRange = transaction1.isInRange(transaction2.getTimeStamp().getTimeStampInMilliSecs());
+        boolean inRange = transaction1.isWithinLast60Seconds(transaction2.getTimeStamp().getTimeStampInMilliSecs());
         assertThat(inRange).isTrue();
 
     }
@@ -27,7 +27,7 @@ public class TransactionTest {
         Transaction transaction1 = new Transaction(1, currentTimeStampInMilliSecs);
         Transaction transaction2 = new Transaction(2, transaction1.getTimeStamp().getTimeStampInMilliSecs() + 70000);
 
-        boolean inRange = transaction1.isInRange(transaction2.getTimeStamp().getTimeStampInMilliSecs());
+        boolean inRange = transaction1.isWithinLast60Seconds(transaction2.getTimeStamp().getTimeStampInMilliSecs());
         assertThat(inRange).isFalse();
     }
 

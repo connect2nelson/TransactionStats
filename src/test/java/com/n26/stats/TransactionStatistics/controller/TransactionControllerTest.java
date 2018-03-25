@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionControllerTest {
 
-    private static String TRANSACTIONS_ENDPOINT = "/v1/transactions/";
+    private static String TRANSACTIONS_ENDPOINT = "/api/v1/transactions/";
 
     @Mock
     private TransactionService transactionService;

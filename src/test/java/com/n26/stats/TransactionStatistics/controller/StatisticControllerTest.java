@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticControllerTest {
 
-    private final static String STATS_ENDPOINT = "/v1/stats/";
+    private final static String STATS_ENDPOINT = "/api/v1/stats";
 
     private MockMvc mockMvc;
 

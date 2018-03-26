@@ -15,6 +15,14 @@ public class Statistic {
         this.count = count;
     }
 
+    public Statistic() {
+        this.sum = 0;
+        this.avg = 0;
+        this.max = 0;
+        this.min = 0;
+        this.count = 0;
+    }
+
     public double getSum() {
         return sum;
     }

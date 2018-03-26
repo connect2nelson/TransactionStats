@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.n26.stats.TransactionStatistics.TransactionStatisticsApplication;
 import com.n26.stats.TransactionStatistics.model.Statistic;
 import com.n26.stats.TransactionStatistics.model.TransactionDTO;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -27,44 +26,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = {TransactionStatisticsApplication.class})
 @AutoConfigureMockMvc
-public class StatisticControllerIT {
+public class TransactionStatsIntegrationTest {
 
     private final static String STATS_ENDPOINT = "/api/v1/stats";
+    private final static String TRANSACTIONS_ENDPOINT = "/api/v1/transactions/";
 
     @Autowired
     private MockMvc mvc;
 
+    private TransactionDTO transactionDTO;
     private static ObjectMapper jsonMapper = new ObjectMapper();
 
-    @Before
-    public void setup() throws Exception {
-        TransactionDTO transactionDTO = new TransactionDTO(1, Instant.now().toEpochMilli());
-        addAndCheckWhetherATempTransactionIsAdded(transactionDTO);
-    }
+    private void addTransaction(TransactionDTO transactionDTO) throws Exception {
 
-    @Test
-    public void shouldReturnStatisticFromCacheServiceWhenStatsAreAvailable() throws Exception {
+        this.transactionDTO = new TransactionDTO(transactionDTO.getAmount(), transactionDTO.getTimestamp());
 
-        MockHttpServletResponse response = mvc.perform(get(STATS_ENDPOINT))
-                .andDo(print())
-                .andReturn().getResponse();
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-
-        assertThat(response.getContentAsString()).isNotEmpty();
-        Statistic statistic = jsonMapper.readValue(response.getContentAsString(), Statistic.class);
-
-        assertThat(statistic).isNotNull();
-
-        //As we are adding a transaction before running the test, we should see a non-zero count
-        assertThat(statistic.getCount()).isGreaterThan(0);
-    }
-
-    private void addAndCheckWhetherATempTransactionIsAdded(TransactionDTO transactionDTO) throws Exception {
-
-        String TRANSACTIONS_ENDPOINT = "/api/v1/transactions/";
-
-        String transactionAsString = jsonMapper.writeValueAsString(transactionDTO);
+        String transactionAsString = jsonMapper.writeValueAsString(this.transactionDTO);
 
         MockHttpServletResponse response = mvc.perform(
                 post(TRANSACTIONS_ENDPOINT)
@@ -72,10 +49,28 @@ public class StatisticControllerIT {
                         .content(transactionAsString))
                 .andDo(print())
                 .andReturn().getResponse();
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-
     }
 
+    //Integration test to check whether methods marked as @Async and @EnableScheduling annotation.
+    //are working correctly
+    @Test
+    public void shouldRemoveExpiredTransactionsSummary() throws Exception {
 
+        //Adding more than 60 transactions with 1 sec interval
+        Instant originalTimeStamp = Instant.now();
+        for (int i = 0; i < 70; i++) {
+            TransactionDTO transactionDTO = new TransactionDTO(1, originalTimeStamp.plusSeconds(i).toEpochMilli());
+            addTransaction(transactionDTO);
+        }
+
+        MockHttpServletResponse response = mvc.perform(get(STATS_ENDPOINT))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+        assertThat(response.getContentAsString()).isNotEmpty();
+
+        Statistic statistic = jsonMapper.readValue(response.getContentAsString(), Statistic.class);
+        assertThat(statistic.getCount()).isEqualTo(60L);
+    }
 }

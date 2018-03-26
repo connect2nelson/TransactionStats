@@ -78,6 +78,7 @@ public class StatisticsCacheService {
     }
 
     public Statistic getStatistic() throws NoStatisticAvailableException {
+        removeExpiredStats();
         return calculateStatistics();
     }
 

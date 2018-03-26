@@ -39,7 +39,7 @@ public class StatisticControllerAsyncIntegrationTest {
 
     private void addTransaction(TransactionDTO transactionDTO) throws Exception {
 
-        this.transactionDTO = new TransactionDTO(transactionDTO.getAmount(), transactionDTO.getTimeStamp());
+        this.transactionDTO = new TransactionDTO(transactionDTO.getAmount(), transactionDTO.getTimestamp());
 
         String transactionAsString = jsonMapper.writeValueAsString(this.transactionDTO);
 

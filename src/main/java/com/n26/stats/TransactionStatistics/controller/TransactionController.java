@@ -27,7 +27,8 @@ public class TransactionController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void saveTransaction(@RequestBody TransactionDTO transactionDTO) throws TransactionTimeOutOfRangeException {
-        Transaction transaction = new Transaction(transactionDTO.getAmount(), transactionDTO.getTimeStamp());
+
+        Transaction transaction = new Transaction(transactionDTO.getAmount(), transactionDTO.getTimestamp());
         transactionService.saveTransaction(transaction);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan("com.n26.stats")
 public class TransactionStatisticsApplication {
 
-
 	@IgnoreCoverage
 	public static void main(String[] args) {
 		SpringApplication.run(TransactionStatisticsApplication.class, args);

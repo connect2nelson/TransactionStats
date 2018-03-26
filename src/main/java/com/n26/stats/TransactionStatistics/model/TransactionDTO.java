@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class TransactionDTO {
 
     private double amount;
-    private long timeStamp;
+    private long timestamp;
 
     public TransactionDTO() {
     }
 
     public TransactionDTO(double amount, long timeStampInMilliSecs) {
         this.amount = amount;
-        this.timeStamp = timeStampInMilliSecs;
+        this.timestamp = timeStampInMilliSecs;
     }
 
     public double getAmount() {
@@ -24,12 +24,12 @@ public class TransactionDTO {
         this.amount = amount;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
 }

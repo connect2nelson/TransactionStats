@@ -85,8 +85,8 @@ public class StatisticsCacheService {
     @Scheduled(fixedDelay = 1000, initialDelay = 1000)
     public void addBucketForNewStatEntriesToBeAddedAndCleanup() {
         long timeInSec = Instant.now().getEpochSecond();
-        removeExpired();
 
+        removeExpiredStats();
         try {
             lock.lock();
             if (!perSecondStatsCacheMap.containsKey(timeInSec)) {
@@ -97,7 +97,7 @@ public class StatisticsCacheService {
         }
     }
 
-    private void removeExpired() {
+    private void removeExpiredStats() {
         try {
             lock.lock();
 

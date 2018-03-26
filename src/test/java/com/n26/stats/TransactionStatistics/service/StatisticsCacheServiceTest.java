@@ -104,7 +104,6 @@ public class StatisticsCacheServiceTest {
         assertThat(111.).isEqualTo(summaryStat.getMax());
         assertThat(122.).isEqualTo(summaryStat.getSum());
         assertThat(61.).isEqualTo(summaryStat.getAvg());
-
     }
 
     @Test
@@ -123,6 +122,25 @@ public class StatisticsCacheServiceTest {
         assertThat(1.).isEqualTo(summaryStat.getMin());
         assertThat(1.).isEqualTo(summaryStat.getMax());
         assertThat(60.).isEqualTo(summaryStat.getSum());
+        assertThat(1.).isEqualTo(summaryStat.getAvg());
+    }
+
+    @Test
+    public void shouldNotCleanupTransactionsOlderThan60secsIfCacheSizeIsLessThan60() throws InterruptedException, TransactionTimeOutOfRangeException, NoStatisticAvailableException {
+
+        Instant now = Instant.now();
+        for (int i = 0; i < 50; i++) {
+            statisticsCacheService.addTransaction(createTransaction(1., now.plusSeconds(i).toEpochMilli()));
+        }
+
+        statisticsCacheService.addBucketForNewStatEntriesToBeAddedAndCleanup();
+
+        Statistic summaryStat = statisticsCacheService.getStatistic();
+
+        assertThat(50L).isEqualTo(summaryStat.getCount());
+        assertThat(1.).isEqualTo(summaryStat.getMin());
+        assertThat(1.).isEqualTo(summaryStat.getMax());
+        assertThat(50.).isEqualTo(summaryStat.getSum());
         assertThat(1.).isEqualTo(summaryStat.getAvg());
     }
 

@@ -6,6 +6,8 @@ import com.n26.stats.TransactionStatistics.exception.TransactionTimeOutOfRangeEx
 import com.n26.stats.TransactionStatistics.model.Statistic;
 import com.n26.stats.TransactionStatistics.model.Transaction;
 import com.n26.stats.TransactionStatistics.model.valueobject.Amount;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -77,6 +79,35 @@ public class StatisticsCacheService {
 
     public Statistic getStatistic() throws NoStatisticAvailableException {
         return calculateStatistics();
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+    public void addBucketForNewStatEntriesToBeAddedAndCleanup() {
+        long timeInSec = Instant.now().getEpochSecond();
+        removeExpired();
+
+        try {
+            lock.lock();
+            if (!perSecondStatsCacheMap.containsKey(timeInSec)) {
+                perSecondStatsCacheMap.put(timeInSec, new DoubleSummaryStatistics());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void removeExpired() {
+        try {
+            lock.lock();
+
+            while (perSecondStatsCacheMap.size() > 60) {
+                perSecondStatsCacheMap.remove(perSecondStatsCacheMap.firstKey());
+            }
+        } finally {
+            lock.unlock();
+        }
+
     }
 
 }

@@ -4,8 +4,10 @@ import com.n26.stats.TransactionStatistics.coverage.IgnoreCoverage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan("com.n26.stats")
 public class TransactionStatisticsApplication {
 

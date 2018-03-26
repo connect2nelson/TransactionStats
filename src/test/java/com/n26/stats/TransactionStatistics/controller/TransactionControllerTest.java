@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -33,7 +34,6 @@ public class TransactionControllerTest {
 
     @InjectMocks
     private TransactionController controller;
-
 
     private MockMvc mockMvc;
     private static ObjectMapper jsonMapper = new ObjectMapper();
@@ -59,6 +59,8 @@ public class TransactionControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getContentAsString()).isEmpty();
+
+        verify(transactionService).saveTransaction(isA(Transaction.class));
     }
 
     @Test
@@ -78,5 +80,7 @@ public class TransactionControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
         assertThat(response.getContentAsString()).isEmpty();
+
+        verify(transactionService).saveTransaction(isA(Transaction.class));
     }
 }

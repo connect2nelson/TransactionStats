@@ -107,6 +107,25 @@ public class StatisticsCacheServiceTest {
 
     }
 
+    @Test
+    public void shouldCleanupTransactionsOlderThan60secsAndIfCacheSizeIsGreaterThan60() throws InterruptedException, TransactionTimeOutOfRangeException, NoStatisticAvailableException {
+
+        Instant now = Instant.now();
+        for (int i = 0; i < 70; i++) {
+            statisticsCacheService.addTransaction(createTransaction(1., now.plusSeconds(i).toEpochMilli()));
+        }
+
+        statisticsCacheService.addBucketForNewStatEntriesToBeAddedAndCleanup();
+
+        Statistic summaryStat = statisticsCacheService.getStatistic();
+
+        assertThat(60L).isEqualTo(summaryStat.getCount());
+        assertThat(1.).isEqualTo(summaryStat.getMin());
+        assertThat(1.).isEqualTo(summaryStat.getMax());
+        assertThat(60.).isEqualTo(summaryStat.getSum());
+        assertThat(1.).isEqualTo(summaryStat.getAvg());
+    }
+
     private Transaction createTransaction(double amount, long nowTime) {
         Transaction transaction = new Transaction(amount, nowTime);
         return transaction;

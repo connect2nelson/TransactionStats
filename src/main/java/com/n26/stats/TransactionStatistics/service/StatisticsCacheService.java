@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.n26.stats.TransactionStatistics.model.StatsConstants.WINDOW_PERIOD;
+
 @Service
 public class StatisticsCacheService {
 
@@ -102,7 +104,7 @@ public class StatisticsCacheService {
         try {
             lock.lock();
 
-            while (perSecondStatsCacheMap.size() > 60) {
+            while (perSecondStatsCacheMap.size() > WINDOW_PERIOD) {
                 perSecondStatsCacheMap.remove(perSecondStatsCacheMap.firstKey());
             }
         } finally {

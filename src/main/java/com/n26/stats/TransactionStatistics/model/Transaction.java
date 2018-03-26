@@ -3,13 +3,13 @@ package com.n26.stats.TransactionStatistics.model;
 import com.n26.stats.TransactionStatistics.model.valueobject.Amount;
 import com.n26.stats.TransactionStatistics.model.valueobject.TimeStamp;
 
+import static com.n26.stats.TransactionStatistics.model.StatsConstants.WINDOW_PERIOD;
+
 
 public class Transaction {
 
     private final Amount amount;
     private final TimeStamp timeStamp;
-    private static final Integer WINDOW_PERIOD = 60;
-
 
     public Transaction(double amount, long timeStampInMilliSecs) {
         this.amount = new Amount(amount);

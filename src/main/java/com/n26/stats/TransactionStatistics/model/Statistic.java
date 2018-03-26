@@ -32,11 +32,11 @@ public class Statistic {
     }
 
     public double getMax() {
-        return max;
+        return max == Double.NEGATIVE_INFINITY ? 0 : max;
     }
 
     public double getMin() {
-        return min;
+        return min == Double.POSITIVE_INFINITY ? 0 : min;
     }
 
     public long getCount() {
